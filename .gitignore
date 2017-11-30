@@ -1,0 +1,6 @@
+/composer.phar
+/config/app_secret.php
+/database/*.db
+/logs/*
+/tmp/*
+/vendor/*
