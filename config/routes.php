@@ -41,8 +41,15 @@ use Cake\Routing\Router;
  */
 Router::defaultRouteClass('DashedRoute');
 
+Router::prefix('admin', function ($routes) {
+	// All routes here will be prefixed with `/admin`
+	// And have the prefix => admin route element added.
+    $routes->fallbacks('DashedRoute');
+});
+
 Router::scope('/', function ($routes) {
-    /**
+
+	/**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
