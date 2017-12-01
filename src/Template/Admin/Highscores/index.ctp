@@ -1,4 +1,12 @@
-<a href="#">Add</a>
+<?php
+
+$types = [
+	'jrs_hs_rdate' => 'Solo',
+	'jrt_hs_rdate' => 'Team',
+	'JMR_hs_rdate' => 'Solo (Run)',
+];
+
+?><a href="#">Add</a>
 <table>
 	<tr>
 		<th>Map Name</th>
@@ -8,10 +16,10 @@
 	<?php foreach ($records as $record): ?>
 	<tr>
 		<td><?= h($record->Namespace); ?></td>
-		<td><?= h($record->KeyName); ?></td>
+		<td><?= h($types[$record->KeyName]); ?></td>
 		<td>
-			<a href="#">Edit</a>
-			<a href="#">Delete</a>
+			<a href="/admin/highscores/edit/<?= h($record->rowid); ?>">Edit</a>
+			<a href="/admin/highscores/delete/<?= h($record->rowid); ?>">Delete</a>
 		</td>
 	</tr>
 	<?php endforeach; ?>
