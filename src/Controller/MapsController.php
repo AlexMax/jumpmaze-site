@@ -9,9 +9,14 @@ use Cake\Datasource\ConnectionManager;
 class MapsController extends AppController {
 
 	public function index() {
+		// Get the list of maps
 		$Map = TableRegistry::get('Maps');
-		$maps = $Map->find()->order('lump')->all();
+		$mapNames = $Map->find('list', [
+			'keyField' => 'lump',
+			'valueField' => 'name',
+		])->toArray();
 
+		// Grab the list of high scores for all maps
 		$Zandronum = TableRegistry::get('Zandronum');
 		$recordRows = $Zandronum->find()
 			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
@@ -22,11 +27,19 @@ class MapsController extends AppController {
 			->order('Namespace')
 			->all();
 
+		// Massage results into easy-to-lookup data structure - makes
+		// things eaiser for the view.
 		$records = [];
 		foreach ($recordRows as $record) {
 			$ns = $record->Namespace;
 			if (!isset($records[$ns])) {
 				$records[$ns] = [];
+
+				// Do we have a map name?  Add it!
+				if (isset($mapNames[$ns])) {
+					$records[$ns]['name'] = $mapNames[$ns];
+					unset($mapNames[$ns]);
+				}
 			}
 
 			switch ($record->KeyName) {
@@ -37,11 +50,31 @@ class MapsController extends AppController {
 				$records[$ns]['time'] = $record->Value;
 				break;
 			default:
-				throw \Exception('Unexpected row data');
+				throw new \Exception('Unexpected row data');
 			}
 		}
 
-		$this->set('maps', $maps);
+		// Any remaining maps have no times set, add them.
+		foreach ($mapNames as $key => $value) {
+			$records[$key] = [
+				'name' => $value,
+			];
+		}
+
+		// Sort the entire list, with MAP## coming first
+		uksort($records, function($a, $b) {
+			$amap = (strpos($a, 'MAP') === 0);
+			$bmap = (strpos($b, 'MAP') === 0);
+
+			if ($amap && !$bmap) {
+				return -1;
+			} elseif (!$amap && $bmap) {
+				return 1;
+			} else {
+				return strcmp($a, $b);
+			}
+		});
+
 		$this->set('records', $records);
 	}
 }

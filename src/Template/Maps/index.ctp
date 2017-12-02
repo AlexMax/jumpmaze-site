@@ -27,10 +27,13 @@ function colorize($name) {
 			// Color escape - figure out the color
 			$color = null;
 			switch ($name[$i + 1]) {
+			case 'c': $color = 'cccccc'; break;
 			case 'f': $color = 'ffcc00'; break;
+			case 'g': $color = 'ff5566'; break;
 			case 'h': $color = '9999ff'; break;
 			case 'j':
 			case '-': $color = 'dfdfdf'; break;
+			case 'q': $color = '008c00'; break;
 			case 'v': $color = '00dddd'; break;
 			case '[':
 				// NewTextColors color
@@ -64,25 +67,33 @@ function colorize($name) {
 		}
 	}
 
-	$colorized .= '</font>';
+	$colorized .= '</span>';
 
 	return $colorized;
 }
 
 ?><table>
 	<tr>
-		<th>Short Name</th>
 		<th>Name</th>
 		<th>Top Player</th>
-		<th>Time</th>
+		<th>Top Time</th>
 	</tr>
-	<?php foreach ($maps as $map): ?>
+	<?php foreach ($records as $key => $record): ?>
 	<tr>
-		<td><?= h($map->lump); ?></td>
-		<td><?= h($map->name); ?></td>
-		<?php if (isset($records[$map->lump])): ?>
-		<td><?= colorize($records[$map->lump]['author']); ?></td>
-		<td><?= ticstime($records[$map->lump]['time']); ?></td>
+		<?php if (isset($record['name'])): ?>
+		<td><?= h($key); ?>: <?= h($record['name']); ?></td>
+		<?php else: ?>
+		<td><?= h($key); ?></td>
+		<?php endif; ?>
+		<?php if (isset($record['author'])): ?>
+		<td><?= colorize($record['author']); ?></td>
+		<?php else: ?>
+		<td>&mdash;</td>
+		<?php endif; ?>
+		<?php if (isset($record['time'])): ?>
+		<td><?= ticstime($record['time']); ?></td>
+		<?php else: ?>
+		<td>&mdash;</td>
 		<?php endif; ?>
 	</tr>
 	<?php endforeach; ?>
