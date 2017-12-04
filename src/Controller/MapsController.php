@@ -106,7 +106,7 @@ class MapsController extends AppController {
 		$records = $Zandronum->find()
 			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
 			->where(['namespace' => $lump.'_pbs'])
-			->order(['value']);
+			->order(['CAST(value AS INTEGER)']);
 
 		$this->set('map', $map);
 		$this->set('records', $records);
