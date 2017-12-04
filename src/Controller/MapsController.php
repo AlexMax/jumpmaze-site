@@ -24,7 +24,7 @@ class MapsController extends AppController {
 			->where(function($exp, $q) {
 				return $exp->in('KeyName', [
 					'jrs_hs_author', 'jrs_hs_time', 'jrt_hs_time',
-					'JMR_hs_author', 'JMR_hs_time']);
+					'JMR_hs_author', 'JMR_hs_time', 'jrt_hs_total_players']);
 			})
 			->orWhere(['KeyName LIKE' => 'jrt_hs_helper_%'])
 			->order('Namespace')
@@ -49,18 +49,28 @@ class MapsController extends AppController {
 			if (strpos($keyname, 'jrt_hs_helper_') === 0) {
 				// Fold helpers into one key name
 				$keyname = 'jrt_hs_helper';
+				// Save helper # for later
+				$helpernum = substr($record->KeyName, 14);
 			}
 
 			switch ($keyname) {
 			case 'jrs_hs_author':
 			case 'JMR_hs_author':
+				// Normal author
 				$records[$ns]['author'] = $record->Value;
 				break;
 			case 'jrt_hs_helper':
+				// Team authors
 				if (!isset($records[$ns]['author'])) {
 					$records[$ns]['author'] = [];
 				}
-				$records[$ns]['author'][] = $record->Value;
+
+				// Ensure that we insert the author in the proper place,
+				// so we can trim the list correctly in the view.
+				$records[$ns]['author'] += [$helpernum => $record->Value];
+				break;
+			case 'jrt_hs_total_players':
+				$records[$ns]['count'] = $record->Value;
 				break;
 			case 'jrs_hs_time':
 			case 'JMR_hs_time':

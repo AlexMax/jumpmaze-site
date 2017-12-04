@@ -90,7 +90,14 @@ function colorize($name) {
 		<?php endif; ?>
 		<?php if (isset($record['author'])): ?>
 		<?php if (is_array($record['author'])): ?>
-		<td><?= implode(', ', array_map('colorize', $record['author'])); ?></td>
+		<td>
+			<?php
+			$authors = $record['author'];
+			ksort($authors);
+			$authors = array_slice($authors, 0, $record['count']);
+			echo implode(', ', array_map('colorize', $authors));
+			?>
+		</td>
 		<?php else: ?>
 		<td><?= colorize($record['author']); ?></td>
 		<?php endif; ?>
