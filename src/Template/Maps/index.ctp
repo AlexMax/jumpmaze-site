@@ -1,15 +1,5 @@
 <?php
 
-// Convert a time in tics to a real time
-function ticstime($gametics) {
-	$ms = (($gametics % 35) / 35) * 100;
-	$secs = $gametics / 35;
-	$mins = $secs / 60 % 60;
-	$secs %= 60;
-
-	return sprintf('%d:%02d.%02d', $mins, $secs, $ms);
-}
-
 // Colorize a high-score nickname
 function colorize($name) {
 	$colorized = '<span style="color:#dfdfdf;">';
@@ -91,7 +81,10 @@ function colorize($name) {
 	<?php foreach ($records as $key => $record): ?>
 	<tr>
 		<?php if (isset($record['name'])): ?>
-		<td><?= h($key); ?>: <?= h($record['name']); ?></td>
+		<td>
+			<a href="/maps/<?= h($key); ?>">
+				<?= h($key); ?>: <?= h($record['name']); ?></td>
+			</a>
 		<?php else: ?>
 		<td><?= h($key); ?></td>
 		<?php endif; ?>
@@ -105,7 +98,7 @@ function colorize($name) {
 		<td>&mdash;</td>
 		<?php endif; ?>
 		<?php if (isset($record['time'])): ?>
-		<td><?= ticstime($record['time']); ?></td>
+		<td><?= $this->ticstime($record['time']); ?></td>
 		<?php else: ?>
 		<td>&mdash;</td>
 		<?php endif; ?>

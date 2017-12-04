@@ -95,4 +95,20 @@ class MapsController extends AppController {
 
 		$this->set('records', $records);
 	}
+
+	public function view($lump) {
+		// Get a specific map
+		$Maps = TableRegistry::get('Maps');
+		$map = $Maps->find()->where(['lump' => $lump])->first();
+
+		// Get the personal bests for a map
+		$Zandronum = TableRegistry::get('Zandronum');
+		$records = $Zandronum->find()
+			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
+			->where(['namespace' => $lump.'_pbs'])
+			->order(['value']);
+
+		$this->set('map', $map);
+		$this->set('records', $records);
+	}
 }
