@@ -114,7 +114,7 @@ class MapsController extends AppController {
 		// Get the personal bests for a map
 		$Zandronum = TableRegistry::get('Zandronum');
 		$records = $Zandronum->find()
-			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
+			->select(['rowid', 'Namespace', 'KeyName', 'Value', 'Timestamp'])
 			->where(['namespace' => $lump.'_pbs'])
 			->order(['CAST(value AS INTEGER)']);
 

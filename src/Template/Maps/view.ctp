@@ -19,11 +19,13 @@ use App\Model\Table\MapsTable;
 	<tr>
 		<th>Player</th>
 		<th>Time</th>
+		<th>Date</th>
 	</tr>
 	<?php foreach ($records as $record): ?>
 	<tr>
-		<td><?= $record->KeyName; ?></td>
+		<td><?= h($record->KeyName); ?></td>
 		<td><?= $this->ticstime($record->Value); ?></td>
+		<td><?= date('F j, Y', $record->Timestamp); ?></td>
 	</tr>
 	<?php endforeach; ?>
 </table>
