@@ -22,8 +22,11 @@ class MapsController extends AppController {
 			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
 			->where(['Namespace NOT LIKE' => '%_pbs'])
 			->where(function($exp, $q) {
-				return $exp->in('KeyName', ['jrs_hs_author', 'jrs_hs_time']);
+				return $exp->in('KeyName', [
+					'jrs_hs_author', 'jrs_hs_time', 'jrt_hs_time',
+					'JMR_hs_author', 'JMR_hs_time']);
 			})
+			->orWhere(['KeyName LIKE' => 'jrt_hs_helper_%'])
 			->order('Namespace')
 			->all();
 
@@ -42,11 +45,26 @@ class MapsController extends AppController {
 				}
 			}
 
-			switch ($record->KeyName) {
+			$keyname = $record->KeyName;
+			if (strpos($keyname, 'jrt_hs_helper_') === 0) {
+				// Fold helpers into one key name
+				$keyname = 'jrt_hs_helper';
+			}
+
+			switch ($keyname) {
 			case 'jrs_hs_author':
+			case 'JMR_hs_author':
 				$records[$ns]['author'] = $record->Value;
 				break;
+			case 'jrt_hs_helper':
+				if (!isset($records[$ns]['author'])) {
+					$records[$ns]['author'] = [];
+				}
+				$records[$ns]['author'][] = $record->Value;
+				break;
 			case 'jrs_hs_time':
+			case 'JMR_hs_time':
+			case 'jrt_hs_time':
 				$records[$ns]['time'] = $record->Value;
 				break;
 			default:

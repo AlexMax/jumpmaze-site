@@ -21,6 +21,7 @@ class MapsTable extends Table {
 			'moderate' => 'Moderate',
 			'hard' => 'Hard',
 			'vhard' => 'Very Hard',
+			'varied' => 'Varied',
 		];
 	}
 }

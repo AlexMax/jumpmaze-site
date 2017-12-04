@@ -27,13 +27,17 @@ function colorize($name) {
 			// Color escape - figure out the color
 			$color = null;
 			switch ($name[$i + 1]) {
+			case 'a': $color = 'cc3333'; break;
 			case 'c': $color = 'cccccc'; break;
 			case 'f': $color = 'ffcc00'; break;
 			case 'g': $color = 'ff5566'; break;
 			case 'h': $color = '9999ff'; break;
 			case 'j':
 			case '-': $color = 'dfdfdf'; break;
+			case 'm': $color = '000000'; break;
 			case 'q': $color = '008c00'; break;
+			case 'r': $color = '800000'; break;
+			case 't': $color = '9966cc'; break;
 			case 'v': $color = '00dddd'; break;
 			case '[':
 				// NewTextColors color
@@ -41,8 +45,10 @@ function colorize($name) {
 				$colorname = substr($name, $i + 2, $end - $i - 2);
 
 				switch ($colorname) {
-				case 'x5': $color = 'd7fff7'; break;
+				case 'j2': $color = 'fffdfe'; break;
 				case 'm5': $color = 'b6b7ff'; break;
+				case 'x5': $color = 'd7fff7'; break;
+				case 'z6': $color = 'ffceef'; break;
 				default: die($colorname);
 				}
 
@@ -65,6 +71,10 @@ function colorize($name) {
 		if ($i == $len) {
 			break;
 		}
+
+		if ($i > $len) {
+			die('too far');
+		}
 	}
 
 	$colorized .= '</span>';
@@ -86,7 +96,11 @@ function colorize($name) {
 		<td><?= h($key); ?></td>
 		<?php endif; ?>
 		<?php if (isset($record['author'])): ?>
+		<?php if (is_array($record['author'])): ?>
+		<td><?= implode(', ', array_map('colorize', $record['author'])); ?></td>
+		<?php else: ?>
 		<td><?= colorize($record['author']); ?></td>
+		<?php endif; ?>
 		<?php else: ?>
 		<td>&mdash;</td>
 		<?php endif; ?>
