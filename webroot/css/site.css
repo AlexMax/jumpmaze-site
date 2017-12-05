@@ -1,0 +1,56 @@
+/* global */
+body {
+	background-color: #111111;
+	color: #dddddd;
+	font-family: sans-serif;
+}
+
+a {
+	color: #dddddd;
+	text-decoration: none;
+}
+
+table {
+	width: 100%;
+}
+
+thead {
+	background-color: #001f3f;
+	color: #ffdc00;
+}
+
+tbody > tr:nth-child(even) {
+	background-color: #001f3f;
+}
+
+/* navigation */
+nav {
+	align-items: center;
+	border-bottom: 1px solid #dddddd;
+	display: flex;
+	height: 3em;
+}
+
+nav > img {
+	padding: 0.5em;
+}
+
+nav > a {
+	padding: 0.5em 1em;
+}
+
+nav > a:hover {
+	background-color: #dddddd;
+	color: #111111;
+}
+
+/* two columns */
+.two-columns {
+	align-items: center;
+	display: flex;
+}
+
+.two-columns > .item {
+	text-align: center;
+	width: 50%;
+}

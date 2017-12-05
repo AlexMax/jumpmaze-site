@@ -4,5 +4,6 @@
 /logs/*
 /tmp/*
 /vendor/*
+/webroot/img/maps/*.png
 
 *.swp

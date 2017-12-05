@@ -74,42 +74,46 @@ function colorize($name) {
 }
 
 ?><table>
-	<tr>
-		<th>Name</th>
-		<th>Top Player</th>
-		<th>Top Time</th>
-	</tr>
-	<?php foreach ($records as $key => $record): ?>
-	<tr>
-		<?php if (isset($record['name'])): ?>
-		<td>
-			<a href="/maps/<?= h($key); ?>">
-				<?= h($key); ?>: <?= h($record['name']); ?></td>
-			</a>
-		<?php else: ?>
-		<td><?= h($key); ?></td>
-		<?php endif; ?>
-		<?php if (isset($record['author'])): ?>
-		<?php if (is_array($record['author'])): ?>
-		<td>
-			<?php
-			$authors = $record['author'];
-			ksort($authors);
-			$authors = array_slice($authors, 0, $record['count']);
-			echo implode(', ', array_map('colorize', $authors));
-			?>
-		</td>
-		<?php else: ?>
-		<td><?= colorize($record['author']); ?></td>
-		<?php endif; ?>
-		<?php else: ?>
-		<td>&mdash;</td>
-		<?php endif; ?>
-		<?php if (isset($record['time'])): ?>
-		<td><?= $this->ticstime($record['time']); ?></td>
-		<?php else: ?>
-		<td>&mdash;</td>
-		<?php endif; ?>
-	</tr>
-	<?php endforeach; ?>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Top Player</th>
+			<th>Top Time</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach ($records as $key => $record): ?>
+		<tr>
+			<?php if (isset($record['name'])): ?>
+			<td>
+				<a href="/maps/<?= h($key); ?>">
+					<?= h($key); ?>: <?= h($record['name']); ?></td>
+				</a>
+			<?php else: ?>
+			<td><?= h($key); ?></td>
+			<?php endif; ?>
+			<?php if (isset($record['author'])): ?>
+			<?php if (is_array($record['author'])): ?>
+			<td>
+				<?php
+				$authors = $record['author'];
+				ksort($authors);
+				$authors = array_slice($authors, 0, $record['count']);
+				echo implode(', ', array_map('colorize', $authors));
+				?>
+			</td>
+			<?php else: ?>
+			<td><?= colorize($record['author']); ?></td>
+			<?php endif; ?>
+			<?php else: ?>
+			<td>&mdash;</td>
+			<?php endif; ?>
+			<?php if (isset($record['time'])): ?>
+			<td><?= $this->ticstime($record['time']); ?></td>
+			<?php else: ?>
+			<td>&mdash;</td>
+			<?php endif; ?>
+		</tr>
+		<?php endforeach; ?>
+	</tbody>
 </table>
