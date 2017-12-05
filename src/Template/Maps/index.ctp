@@ -37,6 +37,7 @@ function colorize($name) {
 				switch ($colorname) {
 				case 'j2': $color = 'fffdfe'; break;
 				case 'm5': $color = 'b6b7ff'; break;
+				case 'q0': $color = 'fab7ed'; break;
 				case 'x5': $color = 'd7fff7'; break;
 				case 'z6': $color = 'ffceef'; break;
 				default: die($colorname);
