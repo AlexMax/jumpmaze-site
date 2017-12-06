@@ -42,9 +42,15 @@ class AppView extends View
 	public function ticstime($gametics) {
 		$ms = (($gametics % 35) / 35) * 100;
 		$secs = $gametics / 35;
-		$mins = $secs / 60 % 60;
+		$mins = $secs / 60;
+		$hours = $mins / 60;
 		$secs %= 60;
 
-		return sprintf('%d:%02d.%02d', $mins, $secs, $ms);
+		if ($hours >= 1) {
+			$mins %= 60;
+			return sprintf('%d:%02d:%02d.%02d', $hours, $mins, $secs, $ms);
+		} else {
+			return sprintf('%d:%02d.%02d', $mins, $secs, $ms);
+		}
 	}
 }
