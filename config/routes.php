@@ -53,6 +53,10 @@ Router::scope('/', function ($routes) {
 		['controller' => 'Maps', 'action' => 'view'],
 		['lump' => '[A-Z0-9]+', 'pass' => ['lump']]
 	);
+	$routes->connect('/players/:player',
+		['controller' => 'Players', 'action' => 'view'],
+		['lump' => '[a-z0-9]+', 'pass' => ['player']]
+	);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.

@@ -26,7 +26,11 @@ use App\Model\Table\MapsTable;
 	<tbody>
 		<?php foreach ($records as $record): ?>
 		<tr>
-			<td><?= h($record->KeyName); ?></td>
+			<td>
+				<a href="/players/<?= h($record->KeyName); ?>">
+					<?= h($record->KeyName); ?>
+				</a>
+			</td>
 			<td><?= $this->ticstime($record->Value); ?></td>
 			<td><?= date('F j, Y', $record->Timestamp); ?></td>
 		</tr>
