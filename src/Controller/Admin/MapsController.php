@@ -30,7 +30,10 @@ class MapsController extends AppController {
 			}
 		}
 
+		$wads = $this->Maps->Wads->find('list')->toArray();
+
 		$this->set('map', $map);
+		$this->set('wads', $wads);
 	}
 
 	/**
@@ -52,7 +55,10 @@ class MapsController extends AppController {
 			}
 		}
 
+		$wads = $this->Maps->Wads->find('list')->toArray();
+
 		$this->set('map', $map);
+		$this->set('wads', $wads);
 	}
 
 	/**

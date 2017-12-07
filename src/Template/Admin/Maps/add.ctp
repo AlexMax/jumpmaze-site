@@ -13,5 +13,9 @@ use App\Model\Table\MapsTable;
 	'options' => MapsTable::difficultyOptions(),
 ]); ?>
 <?= $this->Form->input('par'); ?>
+<?= $this->Form->input('wad_id', [
+	'options' => $wads,
+	'empty' => true,
+]); ?>
 <?= $this->Form->submit(); ?>
 <?= $this->Form->end(); ?>

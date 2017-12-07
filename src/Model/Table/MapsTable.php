@@ -6,6 +6,10 @@ use Cake\ORM\Table;
 
 class MapsTable extends Table {
 
+	public function initialize(array $config) {
+		$this->belongsTo('Wads');
+	}
+
 	public static function typeOptions() {
 		return [
 			'solo' => 'Solo',

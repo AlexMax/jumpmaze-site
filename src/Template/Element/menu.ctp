@@ -1,5 +1,6 @@
 <nav>
 	<img src="/img/logo.png" height="45">
-	<a href="/">Map Rankings</a>
-	<a href="/players">Player Rankings</a>
+	<a href="/">Maps</a>
+	<a href="/wads">WADs</a>
+	<a href="/players">Players</a>
 </nav>

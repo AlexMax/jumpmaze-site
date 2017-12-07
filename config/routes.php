@@ -53,6 +53,10 @@ Router::scope('/', function ($routes) {
 		['controller' => 'Maps', 'action' => 'view'],
 		['lump' => '[A-Z0-9]+', 'pass' => ['lump']]
 	);
+	$routes->connect('/wads/:slug',
+		['controller' => 'Wads', 'action' => 'view'],
+		['lump' => '[a-z0-9-]+', 'pass' => ['slug']]
+	);
 	$routes->connect('/players/:player',
 		['controller' => 'Players', 'action' => 'view'],
 		['lump' => '[a-z0-9]+', 'pass' => ['player']]
