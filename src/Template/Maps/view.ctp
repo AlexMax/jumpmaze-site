@@ -2,9 +2,10 @@
 
 use App\Model\Table\MapsTable;
 
+$this->assign('title', h($map->name));
+
 ?><div class="two-columns">
 	<div class="item">
-		<h3><?= h($map->name); ?></h3>
 		<p>
 			<strong>Short Name:</strong> <?= h($map->lump); ?><br>
 			<strong>Author:</strong> <?= h($map->author); ?><br>

@@ -3,16 +3,39 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Network\Exception\NotFoundException;
 use Cake\ORM\TableRegistry;
 
 class WadsController extends AppController {
 
 	public function index() {
-		$jm1 = [];
-		for ($i = 1;$i <= 32;$i++) {
-			$jm1[] = sprintf('MAP%02d_pbs', $i);
+		$wads = $this->Wads->find()->all();
+
+		$this->set('wads', $wads);
+	}
+
+	public function view($slug) {
+		// Find the WAD we're looking at
+		$wad = $this->Wads->find()
+			->where(['slug' => $slug])
+			->first();
+
+		if ($wad === null) {
+			throw new NotFoundException();
 		}
-		$jm1_count = 22;
+
+		// Find all eligible maps (not team)
+		$maps = $this->Wads->Maps->find()
+			->select(['lump', 'name'])
+			->where(['wad_id' => $wad->id])
+			->where(function ($exp, $q) {
+				return $exp->in('type', ['solo', 'solor']);
+			})->order(['lump']);
+
+		$emaps = [];
+		foreach ($maps as $map) {
+			$emaps[] = $map->lump.'_pbs';
+		}
 
 		$Zandronum = TableRegistry::get('Zandronum');
 
@@ -20,10 +43,10 @@ class WadsController extends AppController {
 		$query = $Zandronum->find();
 		$players = $query->select([
 			'Count' => $query->func()->count('*'), 'KeyName'
-		])->where(function($exp, $q) use ($jm1) {
-			return $exp->in('Namespace', $jm1);
+		])->where(function($exp, $q) use ($emaps) {
+			return $exp->in('Namespace', $emaps);
 		})->group(['KeyName'])
-			->having(['Count' => $jm1_count], ['Count' => 'integer']);
+			->having(['Count' => count($emaps)], ['Count' => 'integer']);
 
 		// Only eligible players are used for our ranking query
 		$eplayers = [];
@@ -35,8 +58,8 @@ class WadsController extends AppController {
 		$query = $Zandronum->find();
 		$times = $query->select([
 			'Time' => $query->func()->sum('Value'), 'KeyName'
-		])->where(function($exp, $q) use ($jm1) {
-			return $exp->in('Namespace', $jm1);
+		])->where(function($exp, $q) use ($emaps) {
+			return $exp->in('Namespace', $emaps);
 		})->where(function($exp, $q) use ($eplayers) {
 			return $exp->in('KeyName', $eplayers);
 		})->group(['KeyName'])->order(['Time']);
@@ -44,8 +67,8 @@ class WadsController extends AppController {
 		// Also find every individual time for all eligible players
 		$rawTimes = $Zandronum->find()
 			->select(['Namespace', 'KeyName', 'Value'])
-			->where(function($exp, $q) use ($jm1) {
-			return $exp->in('Namespace', $jm1);
+			->where(function($exp, $q) use ($emaps) {
+			return $exp->in('Namespace', $emaps);
 		})->order(['CAST(Value AS INTEGER)']);
 
 		// Figure out everybody's rank on every map.
@@ -79,6 +102,8 @@ class WadsController extends AppController {
 		}
 		asort($ranks);
 
+		$this->set('wad', $wad);
+		$this->set('maps', $maps);
 		$this->set('times', $times);
 		$this->set('ranks', $ranks);
 	}
