@@ -16,7 +16,7 @@ function colorize($name) {
 		} else {
 			// Color escape - figure out the color
 			$color = null;
-			switch ($name[$i + 1]) {
+			switch (strtolower($name[$i + 1])) {
 			case 'a': $color = 'cc3333'; break;
 			case 'c': $color = 'cccccc'; break;
 			case 'f': $color = 'ffcc00'; break;
@@ -24,21 +24,27 @@ function colorize($name) {
 			case 'h': $color = '9999ff'; break;
 			case 'j':
 			case '-': $color = 'dfdfdf'; break;
+			case 'k': $color = 'eeee33'; break;
 			case 'm': $color = '000000'; break;
 			case 'q': $color = '008c00'; break;
 			case 'r': $color = '800000'; break;
 			case 't': $color = '9966cc'; break;
+			case 'u': $color = '808080'; break;
 			case 'v': $color = '00dddd'; break;
 			case '[':
 				// NewTextColors color
 				$end = strpos($name, ']', $i);
-				$colorname = substr($name, $i + 2, $end - $i - 2);
+				$colorname = strtolower(substr($name, $i + 2, $end - $i - 2));
 
 				switch ($colorname) {
+				case 'c1': $color = '00d8ff'; break;
+				case 'g2': $color = '27212d'; break;
 				case 'j2': $color = 'fffdfe'; break;
 				case 'm5': $color = 'b6b7ff'; break;
+				case 'p7': $color = '6fbffd'; break;
 				case 'q0': $color = 'fab7ed'; break;
 				case 'u3': $color = 'ff3600'; break;
+				case 'v2': $color = 'ffffff'; break;
 				case 'x5': $color = 'd7fff7'; break;
 				case 'z6': $color = 'ffceef'; break;
 				default: die($colorname);
