@@ -9,13 +9,6 @@ use Cake\Datasource\ConnectionManager;
 class MapsController extends AppController {
 
 	public function index() {
-		// Get the list of maps
-		$Map = TableRegistry::get('Maps');
-		$mapNames = $Map->find('list', [
-			'keyField' => 'lump',
-			'valueField' => 'name',
-		])->toArray();
-
 		// Grab the list of high scores for all maps
 		$Zandronum = TableRegistry::get('Zandronum');
 		$recordRows = $Zandronum->find()
@@ -30,19 +23,12 @@ class MapsController extends AppController {
 			->order('Namespace')
 			->all();
 
-		// Massage results into easy-to-lookup data structure - makes
-		// things eaiser for the view.
-		$records = [];
+		// Massage results into easy-to-lookup data structure
+		$mapRecords = [];
 		foreach ($recordRows as $record) {
 			$ns = $record->Namespace;
-			if (!isset($records[$ns])) {
-				$records[$ns] = [];
-
-				// Do we have a map name?  Add it!
-				if (isset($mapNames[$ns])) {
-					$records[$ns]['name'] = $mapNames[$ns];
-					unset($mapNames[$ns]);
-				}
+			if (!isset($mapRecords[$ns])) {
+				$mapRecords[$ns] = [];
 			}
 
 			$keyname = $record->KeyName;
@@ -57,51 +43,81 @@ class MapsController extends AppController {
 			case 'jrs_hs_author':
 			case 'JMR_hs_author':
 				// Normal author
-				$records[$ns]['author'] = $record->Value;
+				$mapRecords[$ns]['author'] = $record->Value;
 				break;
 			case 'jrt_hs_helper':
 				// Team authors
-				if (!isset($records[$ns]['author'])) {
-					$records[$ns]['author'] = [];
+				if (!isset($mapRecords[$ns]['author'])) {
+					$mapRecords[$ns]['author'] = [];
 				}
 
 				// Ensure that we insert the author in the proper place,
-				// so we can trim the list correctly in the view.
-				$records[$ns]['author'] += [$helpernum => $record->Value];
+				// so we can trim the list correctly later.
+				$mapRecords[$ns]['author'] += [$helpernum => $record->Value];
 				break;
 			case 'jrt_hs_total_players':
-				$records[$ns]['count'] = $record->Value;
+				$mapRecords[$ns]['count'] = $record->Value;
 				break;
 			case 'jrs_hs_time':
 			case 'JMR_hs_time':
 			case 'jrt_hs_time':
-				$records[$ns]['time'] = $record->Value;
+				$mapRecords[$ns]['time'] = $record->Value;
 				break;
 			default:
 				throw new \Exception('Unexpected row data');
 			}
 		}
 
-		// Any remaining maps have no times set, add them.
-		foreach ($mapNames as $key => $value) {
-			$records[$key] = [
-				'name' => $value,
+		// Our final, sorted-by-wad records
+		$records = [];
+
+		// Get the list of WADs
+		$wads = $this->Maps->Wads->find()
+			->order(['id']);
+		foreach ($wads as $wad) {
+			$records[$wad->id] = [
+				'name' => $wad->name,
+				'maps' => [],
 			];
 		}
 
-		// Sort the entire list, with MAP## coming first
-		uksort($records, function($a, $b) {
-			$amap = (strpos($a, 'MAP') === 0);
-			$bmap = (strpos($b, 'MAP') === 0);
+		// Get the list of maps in those WADs
+		$maps = $this->Maps->find()
+			->where(function($exp, $q) use ($records) {
+				return $exp->in('wad_id', array_keys($records));
+			})
+			->orWhere(function($exp, $q) {
+				return $exp->isNull('wad_id');
+			})
+			->order(['lump']);
 
-			if ($amap && !$bmap) {
-				return -1;
-			} elseif (!$amap && $bmap) {
-				return 1;
+		// A place for the unaffiliated maps
+		$records['NULL'] = [
+			'name' => 'Unaffiliated Maps',
+			'maps' => [],
+		];
+
+		foreach ($maps as $map) {
+			if ($map->wad_id === null) {
+				$key = 'NULL';
 			} else {
-				return strcmp($a, $b);
+				$key = $map->wad_id;
 			}
-		});
+			$records[$key]['maps'][$map->lump] = [
+				'name' => $map->name,
+			];
+
+			if (isset($mapRecords[$map->lump])) {
+				$authors = $mapRecords[$map->lump]['author'];
+				if (is_array($authors)) {
+					// Trim author list if too long...
+					ksort($authors);
+					$authors = array_slice($authors, 0, $mapRecords[$map->lump]['count']);
+				}
+				$records[$key]['maps'][$map->lump]['author'] = $authors;
+				$records[$key]['maps'][$map->lump]['time'] = $mapRecords[$map->lump]['time'];
+			}
+		}
 
 		$this->set('records', $records);
 	}
