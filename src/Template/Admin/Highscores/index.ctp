@@ -18,8 +18,8 @@ $types = [
 		<td><?= h($record->Namespace); ?></td>
 		<td><?= h($types[$record->KeyName]); ?></td>
 		<td>
-			<a href="/admin/highscores/edit/<?= h($record->rowid); ?>">Edit</a>
-			<a href="/admin/highscores/delete/<?= h($record->rowid); ?>">Delete</a>
+			<a href="/admin/highscores/edit/<?= h($record->Namespace); ?>">Edit</a>
+			<a href="/admin/highscores/delete/<?= h($record->Namespace); ?>">Delete</a>
 		</td>
 	</tr>
 	<?php endforeach; ?>

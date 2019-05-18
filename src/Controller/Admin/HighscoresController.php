@@ -22,50 +22,28 @@ class HighscoresController extends AppController {
 		$this->set('records', $records);
 	}
 
-	public function edit($id) {
-		// Find the specific date record that "anchors" the others.
+	public function edit($map) {
+		// Find records for map
 		$Zandronum = TableRegistry::get('Zandronum');
-		$record = $Zandronum->find()
+		$records = $Zandronum->find()
 			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
-			->where(['rowid' => $id])
-			->where(['KeyName LIKE' => '%_rdate'])
-			->first();
+			->where(['Namespace' => $map])
+			->all();
 
-		if (empty($record)) {
+		if (empty($records)) {
 			throw new NotFoundException();
 		}
 
-		// Find all associated records and inject them into the form.
-		$data = [];
-		$assocs = $Zandronum->find()
-			->select(['rowid', 'Namespace', 'KeyName', 'Value'])
-			->where(['Namespace' => $record->Namespace])
-			->all();
-		foreach ($assocs as $assoc) {
-			switch ($assoc->KeyName) {
-			case 'jrs_hs_time': // Time
-			case 'JMR_hs_time':
-				$this->request->data('time', $assoc->Value);
-				break;
-			case 'jrs_hs_author': // Colored name
-			case 'JMR_hs_author':
-				$author = str_replace("\x1c", '\c', $assoc->Value);
-				$author = substr($author, 0, strlen($author) - 3);
-				$this->request->data('author', $author);
-				break;
-			case 'jrs_hs_rdate': // Record Date
-			case 'JMR_hs_rdate':
-				$rdate = sprintf('%s-%s-%s',
-					substr($assoc->Value, 0, 4),
-					substr($assoc->Value, 4, 2),
-					substr($assoc->Value, 6, 2));
-				$this->request->data('rdate', $rdate);
-				break;
-			default:
-				throw new \Exception('Unexpected row data');
-			}
+		// What kind of record are we dealing with?
+		die($records->first()->KeyName);
 
-			$data[$assoc->KeyName] = $assoc->Value;
+		if (!empty($this->request->data)) {
+			// Form submission
+			die('submit');
+		} else {
+			// First load - convert records into a format the form understands
+			$data = HighscoreSoloForm::recordsToFormData($records);
+			$this->request->data = $data;
 		}
 
 		$form = new HighscoreSoloForm();
